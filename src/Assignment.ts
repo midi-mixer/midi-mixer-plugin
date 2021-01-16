@@ -1,4 +1,7 @@
+// public
 import EventEmitter from "eventemitter3";
+
+// local
 import { AssignmentData, Button, Indicator } from "./";
 
 export class Assignment extends EventEmitter {
@@ -49,7 +52,7 @@ export class Assignment extends EventEmitter {
     });
   }
 
-  remove() {
+  public remove() {
     $MM.removeAssignment(this.id);
   }
 
