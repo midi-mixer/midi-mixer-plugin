@@ -2,30 +2,35 @@ import EventEmitter from "eventemitter3";
 import { AssignmentData, Button, Indicator } from "./";
 
 export class Assignment extends EventEmitter {
-  public id: string;
-  public name: string;
-  public volume: number;
-  public mute: boolean;
-  public assign: boolean;
-  public run: boolean;
+  public readonly id: string;
+
+  private _name: string = "";
+  private _volume: number = 1;
+  private _meter: number = 0;
+  private _muted: boolean = false;
+  private _assigned: boolean = false;
+  private _running: boolean = false;
+  private _meterTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(id: string, data: AssignmentData) {
     super();
 
+    if (!id || !data?.name) {
+      throw new Error("Must provide an ID and name to create an assignment.");
+    }
+
     this.id = id;
-    this.name = data.name;
-    this.volume = data.volume ?? 1;
-    this.mute = Boolean(data.mute ?? false);
-    this.assign = Boolean(data.assign ?? false);
-    this.run = Boolean(data.assign ?? false);
 
     $MM.updateAssignment(this.id, {
       name: this.name,
-      volume: this.volume,
-      mute: this.mute,
-      assign: this.assign,
-      run: this.run,
     });
+
+    this.name = data.name;
+    this.volume = data.volume ?? 1;
+    this.meter = 0;
+    this.muted = Boolean(data.muted ?? false);
+    this.assigned = Boolean(data.assigned ?? false);
+    this.running = Boolean(data.running ?? false);
 
     $MM.onVolume(this.id, (volume) => {
       this.emit("volume", volume);
@@ -48,27 +53,71 @@ export class Assignment extends EventEmitter {
     $MM.removeAssignment(this.id);
   }
 
-  setVolume(volume: number) {
-    const clampedVolume = Math.min(1, Math.max(0, volume));
-
-    $MM.setIndicator(this.id, Indicator.Volume, clampedVolume);
+  public get name() {
+    return this._name;
   }
 
-  setMeter(level: number) {
+  public set name(name: string) {
+    const trimmed = name.trim();
+    if (!trimmed) throw new Error("Can't set an assignment name to be blank.");
+
+    this._name = trimmed;
+  }
+
+  public get volume() {
+    return this._volume;
+  }
+
+  public set volume(level: number) {
+    const clampedVolume = Math.min(1, Math.max(0, level));
+    this._volume = clampedVolume;
+    $MM.setIndicator(this.id, Indicator.Volume, this._volume);
+  }
+
+  public get meter() {
+    return this._meter;
+  }
+
+  public set meter(level: number) {
+    if (this._meterTimer) {
+      clearTimeout(this._meterTimer);
+      delete this._meterTimer;
+    }
+
     const clampedLevel = Math.min(1, Math.max(0, level));
+    this._meter = clampedLevel;
 
-    $MM.setIndicator(this.id, Indicator.Meter, clampedLevel);
+    $MM.setIndicator(this.id, Indicator.Meter, this._meter);
+
+    this._meterTimer = setTimeout(() => {
+      this._meter = 0;
+    }, 150);
   }
 
-  setMute(muted: boolean) {
-    $MM.setButtonIndicator(this.id, Button.Mute, muted);
+  public get muted() {
+    return this._muted;
   }
 
-  setAssign(assigned: boolean) {
-    $MM.setButtonIndicator(this.id, Button.Assign, assigned);
+  public set muted(muted: boolean) {
+    this._muted = Boolean(muted);
+    $MM.setButtonIndicator(this.id, Button.Mute, this._muted);
   }
 
-  setRun(running: boolean) {
-    $MM.setButtonIndicator(this.id, Button.Run, running);
+  public get assigned() {
+    return this._assigned;
+  }
+
+  public set assigned(assigned: boolean) {
+    this._assigned = Boolean(assigned);
+    $MM.setButtonIndicator(this.id, Button.Assign, this._assigned);
+  }
+
+  public get running() {
+    return this._running;
+  }
+
+  public set running(running: boolean) {
+    this._running = Boolean(running);
+    $MM.setButtonIndicator(this.id, Button.Run, this._running);
   }
 }

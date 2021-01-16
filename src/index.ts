@@ -14,9 +14,9 @@ export enum Button {
 export interface AssignmentData {
   name: string;
   volume?: number;
-  mute?: boolean;
-  assign?: boolean;
-  run?: boolean;
+  muted?: boolean;
+  assigned?: boolean;
+  running?: boolean;
 }
 
 interface MidiMixerApi {
