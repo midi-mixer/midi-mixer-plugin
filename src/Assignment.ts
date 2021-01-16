@@ -36,19 +36,19 @@ export class Assignment extends EventEmitter {
     this.running = Boolean(data.running ?? false);
 
     $MM.onVolume(this.id, (volume) => {
-      this.emit("volume", volume);
+      this.emit("volumeChanged", volume);
     });
 
     $MM.onPress(this.id, Button.Mute, () => {
-      this.emit("mute");
+      this.emit("mutePressed");
     });
 
     $MM.onPress(this.id, Button.Assign, () => {
-      this.emit("assign");
+      this.emit("assignPressed");
     });
 
     $MM.onPress(this.id, Button.Run, () => {
-      this.emit("run");
+      this.emit("runPressed");
     });
   }
 
