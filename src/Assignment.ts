@@ -25,7 +25,7 @@ export class Assignment extends EventEmitter {
     this.id = id;
 
     $MM.updateAssignment(this.id, {
-      name: this.name,
+      name: data.name,
     });
 
     this.name = data.name;
