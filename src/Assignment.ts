@@ -4,6 +4,20 @@ import EventEmitter from "eventemitter3";
 // local
 import { AssignmentData, Button, Indicator } from "./";
 
+/**
+ * An Assignment represents a single plugin-scoped entry in the MIDI Mixer
+ * assignments list. This assignment can send events to MIDI Mixer as well as
+ * react to hardware input coming from the board.
+ *
+ * ```
+ * const foo = new Assignment("foo", {
+ *   name: "Foo Entry"
+ * });
+ *
+ * foo.volume = 0.5;
+ * foo.muted = true;
+ * ```
+ */
 export class Assignment extends EventEmitter {
   public readonly id: string;
 
@@ -16,6 +30,10 @@ export class Assignment extends EventEmitter {
   private _throttle: number = 50;
   private _meterTimer: ReturnType<typeof setTimeout> | undefined;
 
+  /**
+   * @param id A unique ID for this assignment within this plugin.
+   * @param data Data used to MIDI Mixer to set up the assignment.
+   */
   constructor(id: string, data: AssignmentData) {
     super();
 
@@ -56,10 +74,17 @@ export class Assignment extends EventEmitter {
     });
   }
 
+  /**
+   * Remove the assignment from MIDI Mixer.
+   */
   public remove() {
     $MM.removeAssignment(this.id);
   }
 
+  /**
+   * The name of the assignment within MIDI Mixer. Setting this value updates
+   * the entry.
+   */
   public get name() {
     return this._name;
   }
@@ -75,6 +100,10 @@ export class Assignment extends EventEmitter {
     });
   }
 
+  /**
+   * The current indicator level for volume. Setting this updates the entry's
+   * volume level indicator within MIDI Mixer.
+   */
   public get volume() {
     return this._volume;
   }
@@ -85,6 +114,10 @@ export class Assignment extends EventEmitter {
     $MM.setIndicator(this.id, Indicator.Volume, this._volume);
   }
 
+  /**
+   * The current indicator level for meters. Setting this updates the entry's
+   * meter level for the next 150ms before falling off or being updated again.
+   */
   public get meter() {
     return this._meter;
   }
@@ -105,6 +138,10 @@ export class Assignment extends EventEmitter {
     }, 150);
   }
 
+  /**
+   * The current "muted" status indicator. Setting this updates the entry's
+   * "muted" status within MIDI Mixer.
+   */
   public get muted() {
     return this._muted;
   }
@@ -114,6 +151,10 @@ export class Assignment extends EventEmitter {
     $MM.setButtonIndicator(this.id, Button.Mute, this._muted);
   }
 
+  /**
+   * The current "assigned" status indicator. Setting this updates the entry's
+   * "assigned" status within MIDI Mixer.
+   */
   public get assigned() {
     return this._assigned;
   }
@@ -123,6 +164,10 @@ export class Assignment extends EventEmitter {
     $MM.setButtonIndicator(this.id, Button.Assign, this._assigned);
   }
 
+  /**
+   * The current "running" status indicator. Setting this updates the entry's
+   * "running" status within MIDI Mixer.
+   */
   public get running() {
     return this._running;
   }
@@ -132,6 +177,15 @@ export class Assignment extends EventEmitter {
     $MM.setButtonIndicator(this.id, Button.Run, this._running);
   }
 
+  /**
+   * The minimum amount of time in milliseconds between volume change updates
+   * from MIDI Mixer. Some faders are very granular, so throttling these updates
+   * is sensible to ensure the good performance of plugins.
+   *
+   * Accepted values are anything between 50 to 1000.
+   *
+   * Defaults to 50.
+   */
   public get throttle() {
     return this._throttle;
   }

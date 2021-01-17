@@ -12,11 +12,51 @@ export enum Button {
 }
 
 export interface AssignmentData {
+  /**
+   * The name of the entry that will appear in MIDI Mixer. It will also be
+   * marked with the name of the plugin.
+   *
+   * Blank names are not allowed.
+   */
   name: string;
+
+  /**
+   * The initial volume level that the entry has, between 0 and 1.
+   *
+   * Defaults to 1.
+   */
   volume?: number;
+
+  /**
+   * The initial muted status of the entry.
+   *
+   * Defaults to false.
+   */
   muted?: boolean;
+
+  /**
+   * The initial assigned status of the entry.
+   *
+   * Defaults to false.
+   */
   assigned?: boolean;
+
+  /**
+   * The initial running status of the entry.
+   *
+   * Defaults to false.
+   */
   running?: boolean;
+
+  /**
+   * The minimum amount of time in milliseconds between volume change updates
+   * from MIDI Mixer. Some faders are very granular, so throttling these updates
+   * is sensible to ensure the good performance of plugins.
+   *
+   * Accepted values are anything between 50 to 1000.
+   *
+   * Defaults to 50.
+   */
   throttle?: number;
 }
 
