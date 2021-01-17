@@ -17,6 +17,7 @@ export interface AssignmentData {
   muted?: boolean;
   assigned?: boolean;
   running?: boolean;
+  throttle?: number;
 }
 
 interface MidiMixerApi {
@@ -30,6 +31,7 @@ interface MidiMixerApi {
   setIndicator: (id: string, indicator: Indicator, level: number) => void;
   onPress: (id: string, button: Button, fn: () => void) => void;
   onVolume: (id: string, fn: (volume: number) => void) => void;
+  setThrottle: (id: string, throttle: number) => void;
 }
 
 declare global {

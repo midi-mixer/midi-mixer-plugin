@@ -13,6 +13,7 @@ export class Assignment extends EventEmitter {
   private _muted: boolean = false;
   private _assigned: boolean = false;
   private _running: boolean = false;
+  private _throttle: number = 50;
   private _meterTimer: ReturnType<typeof setTimeout> | undefined;
 
   constructor(id: string, data: AssignmentData) {
@@ -34,6 +35,7 @@ export class Assignment extends EventEmitter {
     this.muted = Boolean(data.muted ?? false);
     this.assigned = Boolean(data.assigned ?? false);
     this.running = Boolean(data.running ?? false);
+    this.throttle = data.throttle ?? 50;
 
     $MM.onVolume(this.id, (volume) => {
       this.emit("volumeChanged", volume);
@@ -122,5 +124,15 @@ export class Assignment extends EventEmitter {
   public set running(running: boolean) {
     this._running = Boolean(running);
     $MM.setButtonIndicator(this.id, Button.Run, this._running);
+  }
+
+  public get throttle() {
+    return this._throttle;
+  }
+
+  public set throttle(throttle: number) {
+    const clampedThrottle = Math.min(1000, Math.max(50, throttle));
+    this._throttle = clampedThrottle;
+    $MM.setThrottle(this.id, this._throttle);
   }
 }
