@@ -1,6 +1,6 @@
 # midi-mixer-plugin
 
-A thin  API layer over the raw plugin API provided by [MIDI Mixer](https://www.midi-mixer.com) to make plugin creation easy.
+A thin API layer over the raw plugin API provided by [MIDI Mixer](https://www.midi-mixer.com) to make plugin creation easy.
 
 ## Usage
 
@@ -10,26 +10,72 @@ A great example of this being used effectively with a dev environment set up is 
 npm install midi-mixer-plugin
 ```
 
+Then use the `Assignment` API to manage MIDI Mixer entries.
+
 ```ts
 import { Assignment } from "midi-mixer-plugin";
 
-const example = new Assignment("foo", {
-  name: "Example Plugin Entry",
+log.info("Hello from this example plugin!");
+
+/**
+ * Create a new entry in the MIDI Mixer assignments list with a name of "Foo".
+ */
+const foo = new Assignment("foo", {
+  name: "Foo",
 });
 
-example.on("volumeChanged", (level: number) => {
-  example.volume = level;
+foo.name = "FOO"; // Update the name of "Foo".
+foo.volume = 0.5; // Set the volume indicator level.
+foo.meter = 0.5; // Set the meter level.
+foo.muted = true; // Set the "muted" indicator.
+foo.assigned = true; // Set the "assigned" indicator.
+foo.running = true; // Set the "running" indicator.
+
+/**
+ * Set minimum time between volume change updates from MIDI Mixer to the plugin.
+ */
+foo.throttle = 50;
+
+/**
+ * Remove the entry from the assignments list.
+ */
+foo.remove();
+
+foo.on("volumeChanged", (level) => {
+  // Emitted when a fader is moved.
 });
 
-example.on("mutePressed", () => {
-  example.muted = !example.muted;
+foo.on("mutePressed", () => {
+  // Emitted when a "mute" button is pressed.
 });
 
-example.on("assignPressed", () => {
-  example.assigned = !example.assigned;
+foo.on("assignPressed", () => {
+  // Emitted when an "assign" button is pressed.
 });
 
-example.on("runPressed", () => {
-  example.running = !example.running;
+foo.on("runPressed", () => {
+  // Emitted when a "run" button is pressed.
 });
 ```
+
+## Global APIs
+
+The process that the plugin runs in has access to a few noticably raw global APIs: `$MM` and `log`.
+
+### log.LEVEL: (...params: any[]) => void
+
+`LEVEL` can be any one of `log`, `info`, `warn`, `error`, `verbose`, `debug`, or `silly`.
+
+Anything logged using these functions will be pushed to both the console and to a plugin-specific log file like `%appdata%/midi-mixer-app/logs/plugin.example.log`.
+
+### $MM.onClose: (fn: () => void) => void
+
+When the plugin is unloaded it will close immediately unless you specify an `onClose` function. If you do, the plugin will remain open until the provided function has resolved up to a maximum time of 10 seconds.
+
+### $MM.getManifest: () => Promise<Record<string, unknown>>
+
+Returns the `package.json` of the active plugin.
+
+### $MM.getSettings: () => Promise<Record<string, unknown>>
+
+Returns the user's setting based on your `settings` key in `package.json`.
