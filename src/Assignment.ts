@@ -19,17 +19,19 @@ export class Assignment extends EventEmitter {
   constructor(id: string, data: AssignmentData) {
     super();
 
-    if (!id || !data?.name) {
+    const trimmedName = (data?.name ?? "").trim();
+
+    if (!id || !trimmedName) {
       throw new Error("Must provide an ID and name to create an assignment.");
     }
 
     this.id = id;
 
     $MM.updateAssignment(this.id, {
-      name: data.name,
+      name: trimmedName,
     });
 
-    this.name = data.name;
+    this.name = trimmedName;
     this.volume = data.volume ?? 1;
     this.meter = 0;
     this.muted = Boolean(data.muted ?? false);
