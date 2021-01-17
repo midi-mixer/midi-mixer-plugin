@@ -69,6 +69,10 @@ export class Assignment extends EventEmitter {
     if (!trimmed) throw new Error("Can't set an assignment name to be blank.");
 
     this._name = trimmed;
+
+    $MM.updateAssignment(this.id, {
+      name: this._name,
+    });
   }
 
   public get volume() {
