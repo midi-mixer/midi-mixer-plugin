@@ -61,6 +61,7 @@ export interface AssignmentData {
 }
 
 interface MidiMixerApi {
+  showNotification: (message: string) => void;
   getManifest: () => Promise<Record<string, unknown>>;
   getSettings: () => Promise<Record<string, unknown>>;
   ready: () => void;
