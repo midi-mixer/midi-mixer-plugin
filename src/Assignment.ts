@@ -11,7 +11,7 @@ import { AssignmentData, Button, Indicator } from "./";
  *
  * ```
  * const foo = new Assignment("foo", {
- *   name: "Foo Entry"
+ *   name: "Foo Entry",
  * });
  *
  * foo.volume = 0.5;
@@ -32,7 +32,7 @@ export class Assignment extends EventEmitter {
 
   /**
    * @param id A unique ID for this assignment within this plugin.
-   * @param data Data used to MIDI Mixer to set up the assignment.
+   * @param data Data used for MIDI Mixer to set up the assignment.
    */
   constructor(id: string, data: AssignmentData) {
     super();
