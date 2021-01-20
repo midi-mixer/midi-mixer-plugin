@@ -44,11 +44,6 @@ export class Assignment extends EventEmitter {
     }
 
     this.id = id;
-
-    $MM.updateAssignment(this.id, {
-      name: trimmedName,
-    });
-
     this.name = trimmedName;
     this.volume = data.volume ?? 1;
     this.meter = 0;
