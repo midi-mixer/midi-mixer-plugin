@@ -58,6 +58,31 @@ foo.on("runPressed", () => {
 });
 ```
 
+You can also use the `ButtonType` API to manage MIDI Mixer generic buttons.
+
+```ts
+import { ButtonType } from "midi-mixer-plugin";
+
+/**
+ * Create a new button type that generic buttons can be assigned to.
+ */
+const foo = new ButtonType("foo", {
+  name: "Foo",
+});
+
+foo.name = "FOO"; // Update the name of "Foo".
+foo.active = true; // Set the button's indicator.
+
+/**
+ * Remove the button type from the list.
+ */
+foo.remove();
+
+foo.on("pressed", () => {
+  // Emitted when the generic button is pressed.
+});
+```
+
 ## Global APIs
 
 The process that the plugin runs in has access to a few noticably raw global APIs: `$MM` and `log`.
