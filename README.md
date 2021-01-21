@@ -104,3 +104,7 @@ Returns the `package.json` of the active plugin.
 ### $MM.getSettings: () => Promise<Record<string, unknown>>
 
 Returns the user's setting based on your `settings` key in `package.json`.
+
+### $MM.showNotification: (message: string) => void
+
+Displays a Windows notification with the given content.
