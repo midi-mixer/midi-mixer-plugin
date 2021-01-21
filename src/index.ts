@@ -1,4 +1,5 @@
-export { Assignment } from "./Assignment";
+export * from "./Assignment";
+export * from "./ButtonType";
 
 export enum Indicator {
   Volume = "volume",
@@ -9,6 +10,7 @@ export enum Button {
   Mute = "mute",
   Assign = "assign",
   Run = "run",
+  Generic = "generic",
 }
 
 export interface AssignmentData {
@@ -60,6 +62,23 @@ export interface AssignmentData {
   throttle?: number;
 }
 
+export interface ButtonTypeData {
+  /**
+   * The name of the entry that will appear in MIDI Mixer. It will also be
+   * marked with the name of the plugin.
+   *
+   * Blank names are not allowed.
+   */
+  name: string;
+
+  /**
+   * The initial indicator status of the entry.
+   *
+   * Defaults to false.
+   */
+  active?: boolean;
+}
+
 interface MidiMixerApi {
   showNotification: (message: string) => void;
   getManifest: () => Promise<Record<string, unknown>>;
@@ -73,6 +92,7 @@ interface MidiMixerApi {
   onPress: (id: string, button: Button, fn: () => void) => void;
   onVolume: (id: string, fn: (volume: number) => void) => void;
   setThrottle: (id: string, throttle: number) => void;
+  updateButtonType: (id: string, data: ButtonTypeData) => void;
 }
 
 interface LogFunctions {
