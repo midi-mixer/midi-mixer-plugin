@@ -41,6 +41,7 @@ export class ButtonType extends EventEmitter {
 
     this.id = id;
     this.name = trimmedName;
+    this.active = Boolean(data.active);
 
     $MM.onPress(this.id, Button.Generic, () => {
       this.emit("pressed");
