@@ -93,6 +93,8 @@ interface MidiMixerApi {
   onVolume: (id: string, fn: (volume: number) => void) => void;
   setThrottle: (id: string, throttle: number) => void;
   updateButtonType: (id: string, data: ButtonTypeData) => void;
+  onSettingsButtonPress: (id: string, fn: () => void) => void;
+  setSettingsStatus: (id: string, text: string) => void;
 }
 
 interface LogFunctions {
