@@ -11,7 +11,8 @@
     "strict": true, // includes noImplicitAny, noImplicitThis, alwaysStrict and all strict options
     "outDir": "lib",
     "target": "ES5",
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "skipLibCheck": true
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.spec.ts"]
