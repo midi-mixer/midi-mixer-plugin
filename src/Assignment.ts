@@ -87,6 +87,7 @@ export class Assignment extends EventEmitter {
   public set name(name: string) {
     const trimmed = name.trim();
     if (!trimmed) throw new Error("Can't set an assignment name to be blank.");
+    if (this._name === trimmed) return;
 
     this._name = trimmed;
 
@@ -105,6 +106,8 @@ export class Assignment extends EventEmitter {
 
   public set volume(level: number) {
     const clampedVolume = Math.min(1, Math.max(0, level));
+    if (this._volume === clampedVolume) return;
+
     this._volume = clampedVolume;
     $MM.setIndicator(this.id, Indicator.Volume, this._volume);
   }
@@ -142,7 +145,10 @@ export class Assignment extends EventEmitter {
   }
 
   public set muted(muted: boolean) {
-    this._muted = Boolean(muted);
+    const sanitisedMuted = Boolean(muted);
+    if (this._muted === sanitisedMuted) return;
+
+    this._muted = sanitisedMuted;
     $MM.setButtonIndicator(this.id, Button.Mute, this._muted);
   }
 
@@ -155,6 +161,9 @@ export class Assignment extends EventEmitter {
   }
 
   public set assigned(assigned: boolean) {
+    const sanitisedAssigned = Boolean(assigned);
+    if (this._assigned === sanitisedAssigned) return;
+
     this._assigned = Boolean(assigned);
     $MM.setButtonIndicator(this.id, Button.Assign, this._assigned);
   }
@@ -168,6 +177,9 @@ export class Assignment extends EventEmitter {
   }
 
   public set running(running: boolean) {
+    const sanitisedRunning = Boolean(running);
+    if (this._running === sanitisedRunning) return;
+
     this._running = Boolean(running);
     $MM.setButtonIndicator(this.id, Button.Run, this._running);
   }
@@ -187,6 +199,8 @@ export class Assignment extends EventEmitter {
 
   public set throttle(throttle: number) {
     const clampedThrottle = Math.min(1000, Math.max(50, throttle));
+    if (this._throttle === clampedThrottle) return;
+
     this._throttle = clampedThrottle;
     $MM.setThrottle(this.id, this._throttle);
   }

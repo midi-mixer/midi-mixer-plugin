@@ -59,6 +59,7 @@ export class ButtonType extends EventEmitter {
   public set name(name: string) {
     const trimmed = name.trim();
     if (!trimmed) throw new Error("Can't set a button type name to be blank.");
+    if (this._name === trimmed) return;
 
     this._name = trimmed;
 
@@ -72,7 +73,10 @@ export class ButtonType extends EventEmitter {
   }
 
   public set active(active: boolean) {
-    this._active = Boolean(active);
+    const sanitisedActive = Boolean(active);
+    if (this._active === sanitisedActive) return;
+
+    this._active = sanitisedActive;
     $MM.setButtonIndicator(this.id, Button.Generic, this._active);
   }
 }
