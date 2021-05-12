@@ -35,7 +35,7 @@
     },
     "remote": {
       "type": "string",
-      "description": "If the plugin is loaded remotely, the URL from which to load it. If the plugin should be available offline, make sure you create a Service Worker loaded by your root index.html.",
+      "description": "If the plugin is loaded remotely, the URL from which to load it. If the plugin should be available offline, make sure you create a Service Worker loaded by your root index.html. Remote plugins are not currently supported.",
       "examples": ["https://plugins.example.midi-mixer.com"]
     },
     "icon": {
@@ -45,7 +45,7 @@
     },
     "remoteIcon": {
       "type": "string",
-      "description": "For remote usage, the path from the `remote` URL to the icon. If the icon is hosted alongside the `index.html` file, the entry would be `icon.png`. All web-compatible images are accepted.",
+      "description": "For remote usage, the path from the `remote` URL to the icon. If the icon is hosted alongside the `index.html` file, the entry would be `icon.png`. All web-compatible images are accepted. Remote plugins are not currently supported.",
       "examples": ["icon.png"]
     },
     "settings": {
