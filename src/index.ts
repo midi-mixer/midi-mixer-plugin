@@ -1,3 +1,12 @@
+import { isNode } from "./utils";
+import { polyfillApi } from "./nodePolyfill";
+
+/**
+ * If we've detected a Node environment, polyfill a process-based version of the
+ * API that we'll run.
+ */
+if (isNode) polyfillApi();
+
 export * from "./Assignment";
 export * from "./ButtonType";
 
@@ -79,7 +88,7 @@ export interface ButtonTypeData {
   active?: boolean;
 }
 
-interface MidiMixerApi {
+export interface MidiMixerApi {
   showNotification: (message: string) => void;
   getManifest: () => Promise<Record<string, unknown>>;
   getSettings: () => Promise<Record<string, unknown>>;
