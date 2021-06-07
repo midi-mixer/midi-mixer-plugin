@@ -1,6 +1,6 @@
 import { Button, Indicator, MidiMixerApi } from ".";
 import { NodeIpc } from "./nodeIpc";
-import { isNode } from "./utils";
+import { getNodeCpuUsage, isNode } from "./utils";
 
 let polyfilled = false;
 
@@ -138,9 +138,28 @@ export const polyfillApi = (): void => {
     },
   };
 
+  /**
+   * Default handler for a close request instantly pongs the message back to
+   * MIDI Mixer so the process is closed straight away.
+   */
   ipc.once("plugin-close", () => {
     ipc.send("plugin-close");
   });
+
+  /**
+   * Update process stats every 5 seconds.
+   */
+  setInterval(() => {
+    const memoryUsage = process.memoryUsage();
+    const uptime = process.uptime();
+    const cpuPercent = getNodeCpuUsage();
+
+    ipc.send("plugin-stats", {
+      ram: Math.round(memoryUsage.rss / 1024),
+      cpu: cpuPercent,
+      runTime: uptime * 1000,
+    });
+  }, 5000);
 
   (global as any).$MM = $MM;
 };
