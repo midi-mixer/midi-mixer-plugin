@@ -114,7 +114,7 @@ export const polyfillApi = (): void => {
       const event = `plugin-onVolume-${id}`;
       ipc.removeAllListeners(event);
 
-      ipc.on(event, (_event, volume) => {
+      ipc.on(event, (_event: unknown, volume: number) => {
         fn(volume);
       });
     },
