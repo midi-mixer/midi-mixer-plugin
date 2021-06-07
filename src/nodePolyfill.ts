@@ -1,5 +1,5 @@
 import { Button, Indicator, MidiMixerApi } from ".";
-import { NodeIpc } from "./nodeIpc";
+import { NodeIpc } from "./NodeIpc";
 import { getNodeCpuUsage, isNode } from "./utils";
 
 let polyfilled = false;
