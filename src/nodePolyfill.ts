@@ -66,14 +66,8 @@ export const polyfillApi = (): void => {
   };
 
   const $MM: MidiMixerApi = {
-    showNotification: (message: string) => {
-      new Notification(
-        `MIDI Mixer - ${foundManifest.name || foundManifest.key}`,
-        {
-          body: message,
-        }
-      );
-    },
+    showNotification: (message: string) =>
+      void ipc.send("plugin-showNotification", message),
     getManifest: () => ipc.invoke("plugin-getManifest"),
     getSettings: () => ipc.invoke("plugin-getSettings"),
     ready: () => ipc.send("plugin-ready"),
