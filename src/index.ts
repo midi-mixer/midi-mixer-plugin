@@ -106,7 +106,7 @@ export interface MidiMixerApi {
   setSettingsStatus: (id: string, text: string) => void;
 }
 
-interface LogFunctions {
+export interface LogFunctions {
   /**
    * Log an error message
    */

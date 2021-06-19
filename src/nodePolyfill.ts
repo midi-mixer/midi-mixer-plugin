@@ -1,4 +1,4 @@
-import { Button, Indicator, MidiMixerApi } from ".";
+import { Button, Indicator, LogFunctions, MidiMixerApi } from ".";
 import { NodeIpc } from "./NodeIpc";
 import { getNodeCpuUsage, isNode } from "./utils";
 
@@ -26,6 +26,15 @@ export type Throttles = Record<
   }
 >;
 
+enum LogType {
+  Error = "error",
+  Warn = "warn",
+  Info = "info",
+  Verbose = "verbose",
+  Debug = "debug",
+  Silly = "silly",
+  Log = "log",
+}
 /**
  * Polyfill the $MM API with a process-based IPC version for use with separate
  * Node.js processes.
@@ -39,7 +48,22 @@ export const polyfillApi = (): void => {
   const allowedButtons = ["mute", "assign", "run", "generic"];
   const allowedIndicators = ["volume", "meter"];
   const indicatorThrottles: Throttles = {};
-  let foundManifest: any;
+
+  const getLogger = (logType: LogType): ((...params: any[]) => void) => {
+    return (...params: any[]) => {
+      ipc.send("plugin-log", logType, ...params);
+    };
+  };
+
+  const log: LogFunctions = {
+    log: getLogger(LogType.Log),
+    debug: getLogger(LogType.Debug),
+    error: getLogger(LogType.Error),
+    info: getLogger(LogType.Info),
+    silly: getLogger(LogType.Silly),
+    verbose: getLogger(LogType.Verbose),
+    warn: getLogger(LogType.Warn),
+  };
 
   const $MM: MidiMixerApi = {
     showNotification: (message: string) => {
@@ -162,4 +186,5 @@ export const polyfillApi = (): void => {
   }, 5000);
 
   (global as any).$MM = $MM;
+  (global as any).log = log;
 };
