@@ -1,7 +1,6 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema",
-  "required": ["id", "name", "version", "author", "main"],
-  "additionalProperties": false,
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
   "properties": {
     "$schema": {
       "type": "string",
@@ -9,78 +8,149 @@
     },
     "id": {
       "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
       "description": "The unique ID of the plugin. Reverse DNS notation is a popular method here, e.g. 'com.company-name.plugin-name'."
     },
     "name": {
       "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
       "description": "The name of the plugin as it will appear to the user."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["node", "local"],
+      "description": "The semver version of the plugin as it will appear to the user. May also be used to cache remote plugins for offline use and manage when to update local plugins."
     },
     "version": {
       "type": "string",
+      "pattern": "^(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?$",
       "description": "The semver version of the plugin as it will appear to the user. May also be used to cache remote plugins for offline use and manage when to update local plugins."
     },
     "author": {
       "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
       "description": "The author of the plugin (you!) as it will appear to the user."
     },
     "main": {
       "type": "string",
-      "description": "The root index.html to access if the plugin is being loaded locally. Most commonly will be something like 'dist/index.html'.",
-      "examples": ["dist/index.html"]
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "The main file to load when activating the plugin. Needs to be a .js file."
     },
     "dev": {
       "type": "string",
-      "description": "If the user loads a local plugin in development mode, you can specify a different file to load here. This is often useful for bundlers that start a local dev server. Most commonly will be something like 'http://localhost:3000'.",
-      "examples": ["http://localhost:3000", "dist/index.html"]
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "If the user loads a local plugin in development mode, you can specify a different file to load here. This is often useful for bundlers that start a local dev server. Most commonly will be something like 'http://localhost:3000'."
     },
     "remote": {
       "type": "string",
-      "description": "If the plugin is loaded remotely, the URL from which to load it. If the plugin should be available offline, make sure you create a Service Worker loaded by your root index.html. Remote plugins are not currently supported.",
-      "examples": ["https://plugins.example.midi-mixer.com"]
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "If the plugin is loaded remotely, the URL from which to load it. If the plugin should be available offline, make sure you create a Service Worker loaded by your root index.html. Remote plugins are not currently supported."
     },
     "icon": {
       "type": "string",
-      "description": "For main/dev, the relative path from the plugins root to the icon. If the icon was placed alongside the `index.html` file which was at `dist/index.html`, this entry would be `dist/icon.png`. If the icon differs for remote usage, specify `remoteIcon` as well. All web-compatible images are accepted.",
-      "examples": ["dist/icon.png"]
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "For main/dev, the relative path from the plugins root to the icon. If the icon was placed alongside the `index.html` file which was at `dist/index.html`, this entry would be `dist/icon.png`. If the icon differs for remote usage, specify `remoteIcon` as well. All web-compatible images are accepted."
     },
     "remoteIcon": {
       "type": "string",
-      "description": "For remote usage, the path from the `remote` URL to the icon. If the icon is hosted alongside the `index.html` file, the entry would be `icon.png`. All web-compatible images are accepted. Remote plugins are not currently supported.",
-      "examples": ["icon.png"]
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "For remote usage, the path from the `remote` URL to the icon. If the icon is hosted alongside the `index.html` file, the entry would be `icon.png`. All web-compatible images are accepted. Remote plugins are not currently supported."
     },
     "settings": {
-      "description": "Settings that will appear in the MIDI Mixer UI for the user to change. These can be accessed programmatically by the plugin. Useful for capturing things like API keys, addresses, and general preferences.",
-      "patternProperties": {
-        ".*": {
-          "$ref": "#/definitions/setting"
-        }
-      }
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "label": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 100
+              },
+              "required": {
+                "type": "boolean"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["text", "password", "status", "button"],
+                "description": "The type of input to show."
+              },
+              "fallback": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1024,
+                "description": "If no input is given by the user for this field, this is the default value that will be used. Also serves as a placeholder for input fields."
+              }
+            },
+            "required": ["label", "type"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "label": {
+                "$ref": "#/properties/settings/additionalProperties/anyOf/0/properties/label"
+              },
+              "required": {
+                "$ref": "#/properties/settings/additionalProperties/anyOf/0/properties/required"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["toggle"],
+                "description": "The type of input to show."
+              },
+              "fallback": {
+                "type": "boolean",
+                "description": "If no input is given by the user for this field, this is the default value that will be used."
+              }
+            },
+            "required": ["label", "type"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "label": {
+                "$ref": "#/properties/settings/additionalProperties/anyOf/0/properties/label"
+              },
+              "required": {
+                "$ref": "#/properties/settings/additionalProperties/anyOf/0/properties/required"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["integer", "slider"],
+                "description": "The type of input to show."
+              },
+              "fallback": {
+                "type": "number",
+                "description": "If no input is given by the user for this field, this is the default value that will be used."
+              },
+              "min": {
+                "type": "number",
+                "description": "The minimum value the user is allowed to enter for this field."
+              },
+              "max": {
+                "type": "number",
+                "description": "The minimum value the user is allowed to enter for this field."
+              }
+            },
+            "required": ["label", "type", "min", "max"],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "description": "Settings that will appear in the MIDI Mixer UI for the user to change. These can be accessed programmatically by the plugin. Useful for capturing things like API keys, addresses, and general preferences."
     }
   },
-  "definitions": {
-    "setting": {
-      "required": ["label", "type"],
-      "properties": {
-        "label": {
-          "type": "string",
-          "description": "The label for the input field as it will appear to users."
-        },
-        "type": {
-          "$ref": "#/definitions/settingType"
-        },
-        "required": {
-          "type": "boolean",
-          "description": "If this is true, a small marker will be placed near the field in the UI to alert the user."
-        },
-        "fallback": {
-          "type": "string",
-          "description": "If no input is given by the user for this field, this is the default value that will be used. Also serves as a placeholder for input fields."
-        }
-      }
-    },
-    "settingType": {
-      "description": "The type of input to show.",
-      "enum": ["text", "password", "status", "button"]
-    }
-  }
+  "required": ["id", "name", "version", "author", "main"],
+  "additionalProperties": false
 }
